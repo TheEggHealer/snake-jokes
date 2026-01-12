@@ -1,6 +1,26 @@
 .joke-card {
-  width: 30vw;
-  height: 300px;
+  width: 30%;
+  /* height: 300px; */
   min-width: 300px;
+  aspect-ratio: 0.9;
+  overflow: hidden;
+}
+
+.joke-card-image {
+  background-size: 100%;
+  transition: background-size 200ms ease;
+}
+.joke-card-image:hover {
+  background-size: 120%;
+}
+
+.joke-description {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 20%;
   
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.184);
+  backdrop-filter: blur(10px);
 }

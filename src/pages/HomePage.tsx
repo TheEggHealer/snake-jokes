@@ -1,4 +1,4 @@
-import { ActionIcon, Text, Box, Center, Divider, Group, Title, Stack, Button } from "@mantine/core";
+import { ActionIcon, Text, Box, Center, Divider, Group, Title, Stack, Button, Flex } from "@mantine/core";
 import Sidebar from "../components/Sidebar";
 import "./HomePage.css";
 import { IconBook, IconChevronLeft, IconChevronRight, IconConfetti, IconGitCompare, IconHistory, IconMessage, IconMoodSmileBeam, IconPencilPlus, IconSchool, IconSearch } from "@tabler/icons-react";
@@ -86,9 +86,11 @@ function HomePage() {
 
       {/* Teacher Panel */}
       <Box flex={1} mt={30}>
-        {jokes.map(({ created, joke }) => (
-          <JokeCard joke={joke} created={created} key={created} />
-        ))}
+        <Flex dir="row" wrap="wrap" gap={30} m={30}>
+          {jokes.map(({ created, joke }) => (
+            <JokeCard joke={joke} created={created} key={created} />
+          ))}
+        </Flex>
       </Box>
     </Box>
   );
