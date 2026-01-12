@@ -1,0 +1,6 @@
+.session-root {
+  display: flex;
+  flex-direction: row;
+
+  height: 100vh;
+}
