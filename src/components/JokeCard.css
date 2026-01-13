@@ -1,26 +1,38 @@
 .joke-card {
+  position: relative;
   width: 30%;
   /* height: 300px; */
   min-width: 300px;
   aspect-ratio: 0.9;
   overflow: hidden;
+
+  border-radius: 10px;
+
+  cursor: pointer;
 }
 
 .joke-card-image {
-  background-size: 100%;
-  transition: background-size 200ms ease;
+  position: relative;
+  transition: scale 200ms ease;
 }
 .joke-card-image:hover {
-  background-size: 120%;
+  scale: 1.2;
 }
 
 .joke-description {
+  position: absolute;
+  bottom: -100px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   min-height: 20%;
+  width: 100%;
   
   padding: 10px;
   background-color: rgba(0, 0, 0, 0.184);
   backdrop-filter: blur(10px);
+
+  pointer-events: none;
+
+  transition: bottom 200ms ease;
 }
