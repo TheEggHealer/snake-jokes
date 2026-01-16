@@ -20,7 +20,7 @@
 .navbar-logo {
   width: 40px;
   height: 40px;
-  border-radius: 10px;
+  border-radius: 12px;
 
   color: white;
   background-color: var(--mantine-color-primary-4);
@@ -28,7 +28,7 @@
 
 .navbar-input {
   background-color: var(--mantine-color-custom-2) !important;
-  border-radius: 10px !important;
+  border-radius: 12px !important;
 
   &::placeholder {
     color: var(--mantine-color-secondary-3) !important;

@@ -1,11 +1,18 @@
-import { Box } from "@mantine/core";
+import { Box, Stack } from "@mantine/core";
 import "./HomePage.css";
 import Navbar from "../components/Navbar";
+import PageSelector from "../components/PageSelector";
 
 function HomePage() {
   return (
     <Box className="home-root">
       <Navbar />
+
+      <Box className="home-content">
+        <Stack>
+          <PageSelector />
+        </Stack>
+      </Box>
     </Box>
   )
 }

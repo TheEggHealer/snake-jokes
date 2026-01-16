@@ -33,6 +33,7 @@ function Navbar() {
         <Group>
           <Button
             bg={theme.colors.primary[4]}
+            bdrs={12}
             onClick={() => signOut(auth)}
             leftSection={(
               <IconCirclePlusFilled size={18} />
@@ -41,6 +42,7 @@ function Navbar() {
           </Button>
           <Button
             variant="subtle"
+            bdrs={12}
             c={theme.colors.secondary[7]}
             onClick={() => signOut(auth)}
             leftSection={(

@@ -38,7 +38,7 @@ const theme = createTheme({
       '#F3E9E7', // Overlay level 2
       '#E7EEEC', // Overlay green
       '#3BCA70', // Green
-      '#3BCA70',
+      '#F4E3DD', // Overlay active
       '#3BCA70',
       '#3BCA70',
       '#3BCA70',
