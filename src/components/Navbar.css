@@ -1,0 +1,36 @@
+.navbar-root {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 60px;
+
+  border-bottom: 1px solid var(--mantine-color-secondary-1);
+}
+
+.navbar-content {
+  height: 100%;
+  max-width: 1200px;
+  width: 90%;
+
+  margin: 0 auto;
+}
+
+.navbar-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+
+  color: white;
+  background-color: var(--mantine-color-primary-4);
+}
+
+.navbar-input {
+  background-color: var(--mantine-color-custom-2) !important;
+  border-radius: 10px !important;
+
+  &::placeholder {
+    color: var(--mantine-color-secondary-3) !important;
+  }
+}

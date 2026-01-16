@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&family=Goldman:wght@400;700&display=swap');
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -5,7 +7,6 @@
 
   color-scheme: dark;
   color: rgba(47, 47, 47, 0.87);
-  background-color: #ffffff;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -13,15 +14,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+/* For light mode */
+:root[data-mantine-color-scheme="light"] {
+  --mantine-color-body: #F8F6F6 !important;
 }
+
+/* For dark mode */
+/* :root[data-mantine-color-scheme="dark"] {
+  --mantine-color-body: #00ff00 !important;
+} */
