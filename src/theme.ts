@@ -53,7 +53,7 @@ const theme = createTheme({
     fontWeight: '600',
     sizes: {
       h1: { fontSize: '24px', fontWeight: '900' },
-      h2: { fontSize: '24px', fontWeight: '500' },
+      h2: { fontSize: '20px', fontWeight: '500' },
 
     }
   }

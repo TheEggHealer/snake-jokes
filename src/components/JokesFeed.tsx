@@ -1,4 +1,4 @@
-import { Box, Group, Stack } from "@mantine/core"
+import { Box, Group, Stack, Title, Text, useMantineTheme } from "@mantine/core"
 import './JokesFeed.css'
 import { useViewportSize } from "@mantine/hooks";
 import { useEffect, useState, type ReactNode } from "react";
@@ -7,6 +7,8 @@ import type { Joke } from "../types/types";
 import JokeCard from "./JokeCard";
 
 function JokesFeed() {
+  const theme = useMantineTheme()
+
   const [jokes, setJokes] = useState<{created: number, joke: Joke}[]>([])
   const [columns, setColumns] = useState<ReactNode[]>([])
   const { width } =  useViewportSize()
@@ -53,7 +55,11 @@ function JokesFeed() {
 
   return (
     <Box flex={1} className="jokes-feed-root">
-      <Group w='100%' gap={30} align="start">{columns}</Group>
+      <Group justify="space-between" align="center">
+        <Title>All Jokes</Title>
+        <Text fs='italic' c={theme.colors.secondary[7]} >{jokes.length} jokes</Text>
+      </Group>
+      <Group mt={20} w='100%' gap={30} align="start">{columns}</Group>
     </Box>
   )
 }
