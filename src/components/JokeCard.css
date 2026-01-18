@@ -4,5 +4,9 @@
   border-radius: 8px;
   padding: 12px;
 
-  rotate: 0deg;
+  transition: scale 100ms ease;
+}
+
+.joke-card-root:hover {
+  scale: 1.05;
 }

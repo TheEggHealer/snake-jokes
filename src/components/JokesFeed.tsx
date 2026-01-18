@@ -1,4 +1,4 @@
-import { Box, Group, Stack, Text } from "@mantine/core"
+import { Box, Group, Stack } from "@mantine/core"
 import './JokesFeed.css'
 import { useViewportSize } from "@mantine/hooks";
 import { useEffect, useState, type ReactNode } from "react";
@@ -7,7 +7,7 @@ import type { Joke } from "../types/types";
 import JokeCard from "./JokeCard";
 
 function JokesFeed() {
-  const [jokes, setJokes] = useState<{created: string, joke: Joke}[]>([])
+  const [jokes, setJokes] = useState<{created: number, joke: Joke}[]>([])
   const [columns, setColumns] = useState<ReactNode[]>([])
   const { width } =  useViewportSize()
 
@@ -15,16 +15,9 @@ function JokesFeed() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const document = await getApprovedJokes()
-      if(document) {
-        const jokes = Object.keys(document).map((key) => {
-          return {
-            created: key,
-            joke: document[key]
-          }
-        }) as {created: string, joke: Joke}[]
-
-        setJokes(jokes.concat(jokes).concat(jokes).concat(jokes).concat(jokes).concat(jokes).concat(jokes))
+      const fetchedJokes = await getApprovedJokes()
+      if(fetchedJokes) {
+        setJokes(fetchedJokes.concat(fetchedJokes).concat(fetchedJokes).concat(fetchedJokes).concat(fetchedJokes))
         console.log('Fetched jokes.')
       }
     }

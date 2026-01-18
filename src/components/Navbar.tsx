@@ -1,11 +1,27 @@
-import { Box, Button, Center, Group, Input, Title, useMantineTheme } from "@mantine/core"
+import { Avatar, Box, Button, Center, Group, Input, Title, useMantineTheme } from "@mantine/core"
 import './Navbar.css'
 import { IconBalloonFilled, IconCirclePlusFilled, IconDoorEnter, IconSearch } from "@tabler/icons-react"
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase/firebase";
+import { useAuth } from "../context/AuthContext";
+import { useEffect, useState } from "react";
+import { getUsers } from "../services/firestore";
 
 function Navbar() {
-  const theme = useMantineTheme();
+  const theme = useMantineTheme()
+  const { user } = useAuth()
+  const [profilePicture, setProfilePicture] = useState<string>('')
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if(user) {
+        const userData = await getUsers()
+        setProfilePicture(userData.get(user.uid)?.profile_picture ?? '')
+      }
+    }
+    
+    fetchProfile()
+  }, [user])
 
   return (
     <Box className="navbar-root">
@@ -50,6 +66,9 @@ function Navbar() {
             )}>
             Sign Out
           </Button>
+          {profilePicture && (
+            <Avatar src={profilePicture} />
+          )}
         </Group>
       </Group>
     </Box>
