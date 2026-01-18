@@ -6,6 +6,7 @@ import { auth } from "../firebase/firebase";
 import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
 import { getUsers } from "../services/firestore";
+import { Link } from "react-router";
 
 function Navbar() {
   const theme = useMantineTheme()
@@ -47,15 +48,17 @@ function Navbar() {
         </Group>
 
         <Group>
-          <Button
-            bg={theme.colors.primary[4]}
-            bdrs={12}
-            onClick={() => signOut(auth)}
-            leftSection={(
-              <IconCirclePlusFilled size={18} />
-            )}>
-            Add New Joke
-          </Button>
+          <Link to='/new-joke'>
+            <Button
+              bg={theme.colors.primary[4]}
+              bdrs={12}
+              // onClick={() => signOut(auth)}
+              leftSection={(
+                <IconCirclePlusFilled size={18} />
+              )}>
+              Add New Joke
+            </Button>
+          </Link>
           <Button
             variant="subtle"
             bdrs={12}

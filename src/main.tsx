@@ -8,12 +8,15 @@ import theme from './theme.ts';
 
 import { MantineProvider } from '@mantine/core';
 import { AuthProvider } from './context/AuthContext.tsx';
+import { BrowserRouter } from 'react-router'
 
 createRoot(document.getElementById('root')!).render(
   <MantineProvider theme={theme} forceColorScheme='light'>
     <AuthProvider>
       <StrictMode>
-        <App />
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
       </StrictMode>
     </AuthProvider>
   </MantineProvider>
