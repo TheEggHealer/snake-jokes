@@ -29,12 +29,14 @@ function Navbar() {
       <Group justify="space-between" className="navbar-content">
 
         <Group gap={40}>
-          <Group>
-            <Center className="navbar-logo">
-              <IconBalloonFilled />
-            </Center>
-            <Title order={1}>Snake Jokes</Title>
-          </Group>
+          <Link to='/' style={{ textDecoration: 'inherit', color: 'inherit' }}>
+            <Group>
+              <Center className="navbar-logo">
+                <IconBalloonFilled />
+              </Center>
+              <Title order={1}>Snake Jokes</Title>
+            </Group>
+          </Link>
           <Input
             miw={300}
             variant="filled"
