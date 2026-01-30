@@ -1,4 +1,6 @@
 .joke-card-root {
+  width: 100%;
+
   background-color: white;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
@@ -9,4 +11,15 @@
 
 .joke-card-root:hover {
   scale: 1.05;
+}
+
+.image-empty {
+  background-color: var(--mantine-color-custom-1);
+  border-radius: 3px;
+}
+
+.image {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
 }

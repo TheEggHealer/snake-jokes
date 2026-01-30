@@ -3,7 +3,8 @@ export interface Joke {
   date: number
   description: string
   approved_by: UserData[]
-  img_url: string
+  images: string[]
+  orientation: number
 }
 
 export interface UserData {

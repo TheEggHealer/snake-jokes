@@ -1,3 +1,57 @@
 .add-joke-root {
   height: 100vh;
+  margin: 0 auto;
+  margin-top: 100px;
+
+  max-width: 1200px;
+  width: 90%;
+}
+
+.joke-form {
+  width: 100%;
+  padding: 24px;
+  border-radius: 12px;
+
+  background-color: white;
+  border: 1px solid var(--mantine-color-custom-1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+.title-input {
+  padding: 5px;
+  line-height: 2px !important;
+  border-radius: 0 !important;
+  border-bottom: 2px solid var(--mantine-color-secondary-3) !important;
+  
+  &:focus {
+    border-bottom: 2px solid var(--mantine-color-primary-4) !important;
+  }
+}
+
+.other-input {
+  border-radius: 12px !important;
+
+  background-color: var(--mantine-color-custom-1) !important;
+  border: 1px solid var(--mantine-color-secondary-3) !important;
+  
+  &:focus {
+    border: 1px solid var(--mantine-color-primary-4) !important;
+  }
+}
+
+.drop-root {
+  background-color: var(--mantine-color-custom-1) !important;
+  border-radius: 12px !important;
+
+  border: 2px dashed var(--mantine-color-secondary-3) !important;
+}
+
+.image-preview {
+  position: relative;
+
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+
+  border-radius: 12px;
 }
