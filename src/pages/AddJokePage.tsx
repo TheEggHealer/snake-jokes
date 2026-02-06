@@ -6,10 +6,12 @@ import { Dropzone, IMAGE_MIME_TYPE, type FileWithPath } from "@mantine/dropzone"
 import { useState } from "react";
 import JokeCard from "../components/JokeCard";
 import moment from "moment";
+import { useViewportSize } from "@mantine/hooks";
 
 function AddJokePage() {
   const theme = useMantineTheme()
 
+  const { width } = useViewportSize()
   const [title, setTitle] = useState<string>('')
   const [description, setDescription] = useState<string>('')
   const [created, setCreated] = useState<DateValue>()
@@ -24,8 +26,6 @@ function AddJokePage() {
     setFiles(files.filter(f => f !== file))
   }
 
-  console.log(created, typeof created, moment(created).unix())
-
   return (
     <Stack className="add-joke-root">
       <Title>Add New Joke</Title>
@@ -36,7 +36,7 @@ function AddJokePage() {
             <Text fw='bolder'>JOKE TITLE</Text>
             <Input
               variant="unstyled"
-              size="lg"
+              size="md"
               fw='bolder'
               placeholder="Give this joke a name..."
               classNames={{
@@ -58,14 +58,14 @@ function AddJokePage() {
               }}
               value={created}
               onChange={(e) => setCreated(e)}
-              size="lg"
+              size="md"
               />
           </Stack>
           
           <Stack gap={5}>
             <Text fw='bolder'>BACKSTORY</Text>
             <Textarea 
-              size="lg"
+              size="md"
               classNames={{
                 input: 'other-input'
               }}
@@ -138,7 +138,7 @@ function AddJokePage() {
           <Button
             bg={theme.colors.primary[4]}
             bdrs={12}
-            size="lg">
+            size="md">
               Upload Joke
           </Button>
         </Stack>
@@ -153,7 +153,9 @@ function AddJokePage() {
                 date: moment(created).unix(),
                 images: files.length > 0 ? files.map(file => URL.createObjectURL(file)) : [],
                 orientation: orientation
-              }} created={0}/>
+              }} 
+              created={0}
+              viewportWidth={width}/>
           </Box>
         </Stack>
       </Group>

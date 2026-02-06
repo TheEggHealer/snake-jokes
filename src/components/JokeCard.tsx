@@ -4,33 +4,45 @@ import './JokeCard.css'
 import moment from "moment"
 import { IconPhoto } from "@tabler/icons-react"
 import { Carousel } from "@mantine/carousel"
+import { useEffect, useRef, useState } from "react"
+import { useViewportSize } from "@mantine/hooks"
 
 interface JokeCardProps {
   joke: Joke
   created: number
   seed?: number
+  viewportWidth: number
 }
 
-function JokeCard({ joke, created, seed }: JokeCardProps) {
+function JokeCard({ joke, created, seed, viewportWidth }: JokeCardProps) {
   const theme = useMantineTheme()
+
+  const ref = useRef<HTMLDivElement>(null)
+  const [width, setWidth] = useState<number>(0)
 
   const hash = parseInt((`${created + (seed ?? 0)}`).replace(/\D/g, ''), 10)
   const rot = (hash % 3) - 1.5
 
   const dateString = moment.unix(joke.date).format('ddd DD, YYYY')
 
+  useEffect(() => {
+    setWidth(ref.current?.offsetWidth || 100)
+  }, [ref.current, viewportWidth])
+
+  const height = joke.orientation === 0 ? width * 0.8 : width * 1.5
+
   return (
     <Box className="joke-card-root" style={{ rotate: `${rot}deg` }}>
-      <Stack>
+      <Stack ref={ref}>
         {joke.images.length > 0 ? 
-          <Carousel withIndicators={joke.images.length > 1} withControls={joke.images.length > 1} height={joke.orientation === 0 ? 600 : 300}>
+          <Carousel withIndicators={joke.images.length > 1} withControls={joke.images.length > 1} height={height}>
             {joke.images.map(image => (
               <Carousel.Slide className="image">
                 <Image h='100%' src={image} fit="cover" bdrs={3}/>
               </Carousel.Slide>
             ))}
           </Carousel> :
-          <Center className="image-empty" h={joke.orientation === 0 ? 500 : 200}>
+          <Center className="image-empty" h={height}>
             <IconPhoto size={30} />
           </Center>
         }

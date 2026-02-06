@@ -39,7 +39,8 @@ function JokesFeed() {
         <JokeCard 
           joke={jokes.joke}
           created={jokes.created}
-          seed={index * 1283} />
+          seed={index * 1283}
+          viewportWidth={width} />
       ))
     })
 
