@@ -1,16 +1,24 @@
+import imageCompression from 'browser-image-compression';
 import { storage } from '../firebase/firebase';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 
 const JOKE_IMAGES_BUCKET = 'joke-images';
 
 export const uploadImage = async (file: File, fileName?: string): Promise<string> => {
+  const compressionOptions = {
+    maxSizeMB: 1,           // Max file size in MB
+    maxWidthOrHeight: 1280, // Max dimensions
+    useWebWorker: true,     // Improves performance
+  }
+
   try {
-    console.log('Uploading image...')
+    const compressedFile = await imageCompression(file, compressionOptions)
+
     const finalFileName = fileName || `${Date.now()}_${file.name}`
     const fileRef = ref(storage, `${JOKE_IMAGES_BUCKET}/${finalFileName}`)
-    await uploadBytes(fileRef, file)
+    await uploadBytes(fileRef, compressedFile)
     const downloadURL = await getDownloadURL(fileRef)
-    console.log('Uploaded at: ', downloadURL)
+
     return downloadURL
   } catch (error) {
     console.error('Error uploading image:', error)
