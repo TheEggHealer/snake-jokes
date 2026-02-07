@@ -2,13 +2,14 @@ import { Box, Group, Stack, Title, Text, useMantineTheme } from "@mantine/core"
 import './JokesFeed.css'
 import { useViewportSize } from "@mantine/hooks";
 import { useEffect, useState, type ReactNode } from "react";
-import { getApprovedJokes } from "../services/firestore";
-import type { Joke } from "../types/types";
+import { getApprovedJokes, getUsers } from "../services/firestore";
+import type { Joke, UserData } from "../types/types";
 import JokeCard from "./JokeCard";
 
 function JokesFeed() {
   const theme = useMantineTheme()
 
+  const [userDataMap, setUserDataMap] = useState<Map<string, UserData>>()
   const [jokes, setJokes] = useState<{created: number, joke: Joke}[]>([])
   const [columns, setColumns] = useState<ReactNode[]>([])
   const { width } =  useViewportSize()
@@ -17,10 +18,12 @@ function JokesFeed() {
 
   useEffect(() => {
     const fetchData = async () => {
+      const userData = await getUsers()
+      setUserDataMap(userData)
+
       const fetchedJokes = await getApprovedJokes()
       if(fetchedJokes) {
         setJokes(fetchedJokes.concat(fetchedJokes).concat(fetchedJokes).concat(fetchedJokes).concat(fetchedJokes))
-        console.log('Fetched jokes.')
       }
     }
 
@@ -38,6 +41,7 @@ function JokesFeed() {
       cols[index % columnCount].push((
         <JokeCard 
           joke={jokes.joke}
+          userData={userDataMap}
           created={jokes.created}
           seed={index * 1283}
           viewportWidth={width} />

@@ -36,12 +36,7 @@ export async function getApprovedJokes() {
   const data = docSnap.exists() ? docSnap.data() : null
 
   if(data) {
-    const userData = await getUsers()
     const jokes = Object.keys(data).map((timestamp) => {
-      const approved = data[timestamp]['approved_by'].map((uid: string) => userData.get(uid)) as UserData[]
-      
-      data[timestamp]['approved_by'] = approved
-      
       return {
         created: Number.parseInt(timestamp),
         joke: data[timestamp] as Joke
@@ -62,4 +57,12 @@ export async function getUsers() {
     users.set(doc.id, doc.data() as UserData)
   })
   return users
+}
+
+export async function uploadPendingJoke(joke: Joke, timestamp: number) {
+  const docRef = doc(db, 'jokes', 'pending-jokes')
+  await updateDoc(docRef, {
+    [timestamp.toString()]: joke
+  })
+  console.log('Uploaded joke to pending-jokes.')
 }

@@ -7,6 +7,9 @@ import { useState } from "react";
 import JokeCard from "../components/JokeCard";
 import moment from "moment";
 import { useViewportSize } from "@mantine/hooks";
+import { uploadImage } from "../services/storage";
+import type { Joke } from "../types/types";
+import { uploadPendingJoke } from "../services/firestore";
 
 function AddJokePage() {
   const theme = useMantineTheme()
@@ -24,6 +27,30 @@ function AddJokePage() {
 
   const removeImage = (file: FileWithPath) => {
     setFiles(files.filter(f => f !== file))
+  }
+
+  const onUpload = async () => {
+    if(!title || !created) return
+    let images: string[] = []
+
+    // Upload images to firebase storage
+    if(files) {
+      images = await Promise.all(files.map(async (file) => {
+        return await uploadImage(file)
+      }))
+    }
+
+    const timestamp = moment().utc().valueOf()
+    const uploadObject: Joke = {
+      approved_by: [] as string[],
+      date: moment(created).format('YYYY-MM-DD'),
+      images,
+      description,
+      title,
+      orientation
+    }
+
+    await uploadPendingJoke(uploadObject, timestamp)
   }
 
   return (
@@ -78,8 +105,8 @@ function AddJokePage() {
             <Group justify="space-between">
               <Text fw='bolder'>IMAGES</Text>
               <Group>
-                <Radio checked={orientation === 0} onClick={() => setOrientation(0)} label='Portrait' />
-                <Radio checked={orientation === 1} onClick={() => setOrientation(1)} label='Landscape' />
+                <Radio checked={orientation === 0} onClick={() => setOrientation(0)} label='Landscape' />
+                <Radio checked={orientation === 1} onClick={() => setOrientation(1)} label='Portrait' />
               </Group>
             </Group>
             <Dropzone
@@ -116,7 +143,7 @@ function AddJokePage() {
           </Stack>
           
           <Group wrap='wrap'>
-            {files && files.map((file, index) => {
+            {files && files.map((file) => {
               const imageUrl = URL.createObjectURL(file);
 
               return (
@@ -138,7 +165,8 @@ function AddJokePage() {
           <Button
             bg={theme.colors.primary[4]}
             bdrs={12}
-            size="md">
+            size="md"
+            onClick={onUpload}>
               Upload Joke
           </Button>
         </Stack>
@@ -150,10 +178,10 @@ function AddJokePage() {
                 title: title || 'Joke Title',
                 description: description || 'Description ...',
                 approved_by: [],
-                date: moment(created).unix(),
+                date: moment(created).format('YYYY-MM-DD'),
                 images: files.length > 0 ? files.map(file => URL.createObjectURL(file)) : [],
                 orientation: orientation
-              }} 
+              }}
               created={0}
               viewportWidth={width}/>
           </Box>

@@ -1,20 +1,20 @@
 import { Avatar, Box, Center, Divider, Group, Image, Stack, Text, Title, Tooltip, useMantineTheme } from "@mantine/core"
-import type { Joke } from "../types/types"
+import type { Joke, UserData } from "../types/types"
 import './JokeCard.css'
 import moment from "moment"
 import { IconPhoto } from "@tabler/icons-react"
 import { Carousel } from "@mantine/carousel"
 import { useEffect, useRef, useState } from "react"
-import { useViewportSize } from "@mantine/hooks"
 
 interface JokeCardProps {
   joke: Joke
+  userData?: Map<string, UserData>,
   created: number
   seed?: number
   viewportWidth: number
 }
 
-function JokeCard({ joke, created, seed, viewportWidth }: JokeCardProps) {
+function JokeCard({ joke, userData, created, seed, viewportWidth }: JokeCardProps) {
   const theme = useMantineTheme()
 
   const ref = useRef<HTMLDivElement>(null)
@@ -23,7 +23,7 @@ function JokeCard({ joke, created, seed, viewportWidth }: JokeCardProps) {
   const hash = parseInt((`${created + (seed ?? 0)}`).replace(/\D/g, ''), 10)
   const rot = (hash % 3) - 1.5
 
-  const dateString = moment.unix(joke.date).format('ddd DD, YYYY')
+  const dateString = moment(joke.date).format('ddd DD MMMM, YYYY')
 
   useEffect(() => {
     setWidth(ref.current?.offsetWidth || 100)
@@ -54,11 +54,11 @@ function JokeCard({ joke, created, seed, viewportWidth }: JokeCardProps) {
           <Text c={theme.colors.dark[5]}>{joke.description}</Text>
           <Divider />
           <Group gap={5}>
-            {joke.approved_by.map((userData) => (
-              <Tooltip label={userData.user_name}>
+            {joke.approved_by.map((uid) => (
+              <Tooltip label={userData?.get(uid)?.user_name}>
                 <Avatar
                   size='sm'
-                  src={userData.profile_picture} />
+                  src={userData?.get(uid)?.profile_picture} />
               </Tooltip>
             ))}
           </Group>

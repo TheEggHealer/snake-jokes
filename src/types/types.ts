@@ -1,8 +1,8 @@
 export interface Joke {
   title: string
-  date: number
+  date: string
   description: string
-  approved_by: UserData[]
+  approved_by: string[]
   images: string[]
   orientation: number
 }
