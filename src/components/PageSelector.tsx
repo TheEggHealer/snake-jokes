@@ -1,10 +1,14 @@
 import { Box, Group, Stack, Text, useMantineTheme } from "@mantine/core"
 import './PageSelector.css'
-import { useState, type ReactNode } from "react"
+import { type ReactNode } from "react"
 import { IconClockFilled, IconLayoutDashboardFilled } from "@tabler/icons-react"
 
-function PageSelector() {
-  const [selectedPage, setSelectedPage] = useState<number>(0)
+interface PageSelectorProps {
+  selectedPage: number
+  onSelectPage: (page: number) => void
+}
+
+function PageSelector({ selectedPage, onSelectPage }: PageSelectorProps) {
   const theme = useMantineTheme()
 
   return (
@@ -16,14 +20,14 @@ function PageSelector() {
           <PageSelectorItem
             text="All Jokes"
             selected={selectedPage === 0}
-            onClick={() => setSelectedPage(0)}
+            onClick={() => onSelectPage(0)}
             icon={(
               <IconLayoutDashboardFilled size={20} />
             )}/>
           <PageSelectorItem
             text="Pending"
             selected={selectedPage === 1}
-            onClick={() => setSelectedPage(1)}
+            onClick={() => onSelectPage(1)}
             icon={(
               <IconClockFilled size={20} />
             )}/>

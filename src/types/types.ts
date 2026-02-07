@@ -11,3 +11,8 @@ export interface UserData {
   user_name: string
   profile_picture: string
 }
+
+export interface JokeItem {
+  created: number,
+  joke: Joke
+}

@@ -30,8 +30,8 @@ export async function deleteDocument(collectionName: string, docId: string) {
 }
 
 
-export async function getApprovedJokes() {  
-  const docRef = doc(db, 'jokes', 'approved-jokes')
+export async function getJokes({ pending }: { pending: boolean }) {  
+  const docRef = doc(db, 'jokes', pending ? 'pending-jokes' : 'approved-jokes')
   const docSnap = await getDoc(docRef)
   const data = docSnap.exists() ? docSnap.data() : null
 

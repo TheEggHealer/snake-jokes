@@ -14,14 +14,14 @@ interface JokeCardProps {
   viewportWidth: number
 }
 
-function JokeCard({ joke, userData, created, seed, viewportWidth }: JokeCardProps) {
+function JokeCard({ joke, userData, viewportWidth }: JokeCardProps) {
   const theme = useMantineTheme()
 
   const ref = useRef<HTMLDivElement>(null)
   const [width, setWidth] = useState<number>(0)
 
-  const hash = parseInt((`${created + (seed ?? 0)}`).replace(/\D/g, ''), 10)
-  const rot = (hash % 3) - 1.5
+  // const hash = parseInt((`${created + (seed ?? 0)}`).replace(/\D/g, ''), 10)
+  // const rot = (hash % 3) - 1.5
 
   const dateString = moment(joke.date).format('ddd DD MMMM, YYYY')
 
@@ -32,7 +32,7 @@ function JokeCard({ joke, userData, created, seed, viewportWidth }: JokeCardProp
   const height = joke.orientation === 0 ? width * 0.8 : width * 1.5
 
   return (
-    <Box className="joke-card-root" style={{ rotate: `${rot}deg` }}>
+    <Box className="joke-card-root" style={{ rotate: `${0}deg` }}>
       <Stack ref={ref}>
         {joke.images.length > 0 ? 
           <Carousel withIndicators={joke.images.length > 1} withControls={joke.images.length > 1} height={height}>
