@@ -20,6 +20,7 @@ function AddJokePage() {
   const [created, setCreated] = useState<DateValue>()
   const [files, setFiles] = useState<FileWithPath[]>([])
   const [orientation, setOrientation] = useState<number>(0)
+  const [loading, setLoading] = useState<boolean>(false)
 
   const addImages = (newFiles: FileWithPath[]) => {
     setFiles([...files, ...newFiles])
@@ -30,7 +31,11 @@ function AddJokePage() {
   }
 
   const onUpload = async () => {
-    if(!title || !created) return
+    setLoading(true)
+    if(!title || !created) {
+      setLoading(false)
+      return
+    }
     let images: string[] = []
 
     // Upload images to firebase storage
@@ -51,6 +56,7 @@ function AddJokePage() {
     }
 
     await uploadPendingJoke(uploadObject, timestamp)
+    setLoading(false)
   }
 
   return (
@@ -166,6 +172,7 @@ function AddJokePage() {
             bg={theme.colors.primary[4]}
             bdrs={12}
             size="md"
+            loading={loading}
             onClick={onUpload}>
               Upload Joke
           </Button>
