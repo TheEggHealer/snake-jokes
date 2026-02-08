@@ -1,10 +1,11 @@
-import { Avatar, Box, Center, Divider, Group, Image, Stack, Text, Title, Tooltip, useMantineTheme } from "@mantine/core"
+import { Avatar, Box, Button, Center, Divider, Group, Image, Stack, Text, Title, Tooltip, useMantineTheme } from "@mantine/core"
 import type { Joke, UserData } from "../types/types"
 import './JokeCard.css'
 import moment from "moment"
 import { IconPhotoFilled } from "@tabler/icons-react"
 import { Carousel } from "@mantine/carousel"
 import { useEffect, useRef, useState } from "react"
+import { useAuth } from "../context/AuthContext"
 
 interface JokeCardProps {
   joke: Joke
@@ -16,6 +17,7 @@ interface JokeCardProps {
 
 function JokeCard({ joke, userData, viewportWidth }: JokeCardProps) {
   const theme = useMantineTheme()
+  const { user } = useAuth()
 
   const ref = useRef<HTMLDivElement>(null)
   const [width, setWidth] = useState<number>(0)
@@ -30,6 +32,12 @@ function JokeCard({ joke, userData, viewportWidth }: JokeCardProps) {
   }, [ref.current, viewportWidth])
 
   const height = joke.orientation === 0 ? width * 0.8 : width * 1.5
+
+  const approveJoke = () => {
+    if (user?.uid) {
+      joke.approved_by.push(user.uid)
+    }
+  }
 
   return (
     <Box className="joke-card-root" style={{ rotate: `${0}deg` }}>
@@ -53,15 +61,22 @@ function JokeCard({ joke, userData, viewportWidth }: JokeCardProps) {
           </Stack>
           <Text c={theme.colors.dark[5]}>{joke.description}</Text>
           <Divider />
-          <Group gap={5}>
-            {joke.approved_by.map((uid) => (
-              <Tooltip label={userData?.get(uid)?.user_name}>
-                <Avatar
-                  size='sm'
-                  src={userData?.get(uid)?.profile_picture} />
-              </Tooltip>
-            ))}
-          </Group>
+          <Stack>
+            <Group gap={5}>
+              {joke.approved_by.map((uid) => (
+                <Tooltip label={userData?.get(uid)?.user_name}>
+                  <Avatar
+                    size='sm'
+                    src={userData?.get(uid)?.profile_picture} />
+                </Tooltip>
+              ))}
+            </Group>
+            {(user && !joke.approved_by.includes(user.uid)) && 
+              <Button onClick={approveJoke}>
+                Approve Joke
+              </Button>
+            }
+          </Stack>
         </Stack>
       </Stack>
     </Box>
