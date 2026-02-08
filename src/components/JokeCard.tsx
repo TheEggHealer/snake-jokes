@@ -2,7 +2,7 @@ import { Avatar, Box, Center, Divider, Group, Image, Stack, Text, Title, Tooltip
 import type { Joke, UserData } from "../types/types"
 import './JokeCard.css'
 import moment from "moment"
-import { IconPhoto } from "@tabler/icons-react"
+import { IconPhotoFilled } from "@tabler/icons-react"
 import { Carousel } from "@mantine/carousel"
 import { useEffect, useRef, useState } from "react"
 
@@ -43,7 +43,7 @@ function JokeCard({ joke, userData, viewportWidth }: JokeCardProps) {
             ))}
           </Carousel> :
           <Center className="image-empty" h={height}>
-            <IconPhoto size={30} />
+            <IconPhotoFilled color={theme.colors.dark[2]} size={30} />
           </Center>
         }
         <Stack p={5} gap={10}>
