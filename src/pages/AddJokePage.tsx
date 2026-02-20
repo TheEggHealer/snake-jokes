@@ -11,8 +11,10 @@ import { uploadImage } from "../services/storage";
 import type { Joke, UserData } from "../types/types";
 import { getUsers, uploadPendingJoke } from "../services/firestore";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router";
 
 function AddJokePage() {
+  const navigate = useNavigate()
   const theme = useMantineTheme()
   const { user } = useAuth()
 
@@ -69,6 +71,7 @@ function AddJokePage() {
 
     await uploadPendingJoke(uploadObject, timestamp)
     setLoading(false)
+    navigate('/')
   }
 
   return (
