@@ -6,24 +6,24 @@ import { IconPhotoFilled } from "@tabler/icons-react"
 import { Carousel } from "@mantine/carousel"
 import { useEffect, useRef, useState } from "react"
 import { useAuth } from "../context/AuthContext"
+import { approveJoke } from "../services/firestore"
 
 interface JokeCardProps {
   joke: Joke
-  userData?: Map<string, UserData>,
+  userData?: Map<string, UserData>
   created: number
   seed?: number
   viewportWidth: number
+  editing: boolean
 }
 
-function JokeCard({ joke, userData, viewportWidth }: JokeCardProps) {
+function JokeCard({ joke, userData, created, viewportWidth, editing }: JokeCardProps) {
   const theme = useMantineTheme()
   const { user } = useAuth()
 
   const ref = useRef<HTMLDivElement>(null)
   const [width, setWidth] = useState<number>(0)
-
-  // const hash = parseInt((`${created + (seed ?? 0)}`).replace(/\D/g, ''), 10)
-  // const rot = (hash % 3) - 1.5
+  const [approvedBy, setApprovedBy] = useState<string[]>(joke.approved_by)
 
   const dateString = moment(joke.date).format('ddd DD MMMM, YYYY')
 
@@ -33,9 +33,19 @@ function JokeCard({ joke, userData, viewportWidth }: JokeCardProps) {
 
   const height = joke.orientation === 0 ? width * 0.8 : width * 1.5
 
-  const approveJoke = () => {
-    if (user?.uid) {
-      joke.approved_by.push(user.uid)
+  const onApprove = async () => {
+    if (user?.uid && !approvedBy.includes(user.uid)) {
+      const updatedApprovedBy = [...approvedBy, user.uid]
+      setApprovedBy(updatedApprovedBy) // Optimistic update
+      
+      try {
+        await approveJoke(created, user.uid, approvedBy)
+        joke.approved_by.push(user.uid) // Sync joke object
+      } catch (error) {
+        // Revert on failure
+        setApprovedBy(approvedBy)
+        console.error('Failed to approve joke:', error)
+      }
     }
   }
 
@@ -63,7 +73,7 @@ function JokeCard({ joke, userData, viewportWidth }: JokeCardProps) {
           <Divider />
           <Stack>
             <Group gap={5}>
-              {joke.approved_by.map((uid) => (
+              {approvedBy.map((uid) => (
                 <Tooltip label={userData?.get(uid)?.user_name}>
                   <Avatar
                     size='sm'
@@ -71,8 +81,8 @@ function JokeCard({ joke, userData, viewportWidth }: JokeCardProps) {
                 </Tooltip>
               ))}
             </Group>
-            {(user && !joke.approved_by.includes(user.uid)) && 
-              <Button onClick={approveJoke}>
+            {user && !editing && !approvedBy.includes(user.uid) && 
+              <Button onClick={onApprove}>
                 Approve Joke
               </Button>
             }

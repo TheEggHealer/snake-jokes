@@ -27,7 +27,8 @@ function createCols(visibleJokes: JokeItem[], width: number, userData: Map<strin
         created={jokeItem.created}
         seed={index * 1283}
         viewportWidth={width}
-        key={jokeItem.created} />
+        key={jokeItem.created}
+        editing={false} />
     ))
   })
 

@@ -3,16 +3,18 @@ import { DateInput, type DateValue } from '@mantine/dates';
 import './AddJokePage.css'
 import { IconCalendar, IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
 import { Dropzone, IMAGE_MIME_TYPE, type FileWithPath } from "@mantine/dropzone";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import JokeCard from "../components/JokeCard";
 import moment from "moment";
 import { useViewportSize } from "@mantine/hooks";
 import { uploadImage } from "../services/storage";
-import type { Joke } from "../types/types";
-import { uploadPendingJoke } from "../services/firestore";
+import type { Joke, UserData } from "../types/types";
+import { getUsers, uploadPendingJoke } from "../services/firestore";
+import { useAuth } from "../context/AuthContext";
 
 function AddJokePage() {
   const theme = useMantineTheme()
+  const { user } = useAuth()
 
   const { width } = useViewportSize()
   const [title, setTitle] = useState<string>('')
@@ -21,6 +23,16 @@ function AddJokePage() {
   const [files, setFiles] = useState<FileWithPath[]>([])
   const [orientation, setOrientation] = useState<number>(0)
   const [loading, setLoading] = useState<boolean>(false)
+  const [userData, setUserData] = useState<Map<string, UserData>>(new Map())
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const users = await getUsers()
+      setUserData(users)
+    }
+
+    fetchUserData()
+  }, [])
 
   const addImages = (newFiles: FileWithPath[]) => {
     setFiles([...files, ...newFiles])
@@ -184,13 +196,15 @@ function AddJokePage() {
               joke={{
                 title: title || 'Joke Title',
                 description: description || 'Description ...',
-                approved_by: [],
+                approved_by: user ? [user?.uid] : [],
                 date: moment(created).format('YYYY-MM-DD'),
                 images: files.length > 0 ? files.map(file => URL.createObjectURL(file)) : [],
                 orientation: orientation
               }}
+              userData={userData}
               created={0}
-              viewportWidth={width}/>
+              viewportWidth={width}
+              editing={true}/>
           </Box>
         </Stack>
       </Group>

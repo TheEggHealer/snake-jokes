@@ -4,29 +4,32 @@ import PageSelector from "../components/PageSelector";
 import JokesFeed from "../components/JokesFeed";
 import { useEffect, useState } from "react";
 import { type UserData, type JokeItem } from "../types/types";
-import { getJokes, getUsers } from "../services/firestore";
+import { getUsers, listenJokes } from "../services/firestore";
 
 function HomePage() {
   const [page, setPage] = useState<number>(0)
-  const [allJokes, setAllJokes] = useState<{ approved: JokeItem[], pending: JokeItem[] }>()
-  const [userData, setUserData] = useState<Map<string, UserData>>({} as Map<string, UserData>)
+  const [allJokes, setAllJokes] = useState<{ approved: JokeItem[], pending: JokeItem[] }>({ approved: [], pending: [] })
+  const [userData, setUserData] = useState<Map<string, UserData>>(new Map())
 
   // Fetch all jokes and user data
   useEffect(() => {
-    const fetchJokes = async () => {
-      const userData = await getUsers()
-      setUserData(userData)
+    let unsub: (() => void) | undefined
 
-      const approvedJokes = await getJokes({ pending: false })
-      const pendingJokes = await getJokes({ pending: true })
-
-      setAllJokes({
-        approved: approvedJokes || [],
-        pending: pendingJokes || []
+    const init = async () => {
+      // Start listener first so UI updates immediately on any doc change
+      unsub = listenJokes((jokes) => {
+        setAllJokes(jokes)
       })
+
+      const users = await getUsers()
+      setUserData(users)
     }
-    
-    fetchJokes()
+
+    init()
+
+    return () => {
+      if (unsub) unsub()
+    }
   }, [])
 
   return (
