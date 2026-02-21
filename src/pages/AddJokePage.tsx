@@ -7,14 +7,20 @@ import { useEffect, useState } from "react";
 import JokeCard from "../components/JokeCard";
 import moment from "moment";
 import { useViewportSize } from "@mantine/hooks";
-import { uploadImage } from "../services/storage";
+import { uploadImage, deleteImage, getFileNameFromURL } from "../services/storage";
 import type { Joke, UserData } from "../types/types";
-import { getUsers, uploadPendingJoke } from "../services/firestore";
+import { getUsers, uploadPendingJoke, updateJoke } from "../services/firestore";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
+
+interface EditState {
+  joke: Joke
+  created: number
+}
 
 function AddJokePage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const theme = useMantineTheme()
   const { user } = useAuth()
 
@@ -23,9 +29,11 @@ function AddJokePage() {
   const [description, setDescription] = useState<string>('')
   const [created, setCreated] = useState<DateValue>()
   const [files, setFiles] = useState<FileWithPath[]>([])
+  const [existingImages, setExistingImages] = useState<string[]>([])
   const [orientation, setOrientation] = useState<number>(0)
   const [loading, setLoading] = useState<boolean>(false)
   const [userData, setUserData] = useState<Map<string, UserData>>(new Map())
+  const [editingTimestamp, setEditingTimestamp] = useState<number | null>(null)
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -34,6 +42,17 @@ function AddJokePage() {
     }
 
     fetchUserData()
+
+    // Check if we're editing a joke
+    const state = location.state as EditState | null
+    if (state?.joke && state?.created !== undefined) {
+      setTitle(state.joke.title)
+      setDescription(state.joke.description)
+      setCreated(new Date(state.joke.date))
+      setOrientation(state.joke.orientation)
+      setEditingTimestamp(state.created)
+      setExistingImages(state.joke.images || [])
+    }
   }, [])
 
   const addImages = (newFiles: FileWithPath[]) => {
@@ -44,40 +63,60 @@ function AddJokePage() {
     setFiles(files.filter(f => f !== file))
   }
 
+  const removeExistingImage = (imageUrl: string) => {
+    setExistingImages(existingImages.filter(img => img !== imageUrl))
+    // Delete from Firebase
+    const fileName = getFileNameFromURL(imageUrl)
+    if (fileName) {
+      deleteImage(fileName).catch(error => {
+        console.error('Failed to delete image from storage:', error)
+      })
+    }
+  }
+
   const onUpload = async () => {
     setLoading(true)
     if(!title || !created) {
       setLoading(false)
       return
     }
-    let images: string[] = []
+    let newImages: string[] = []
 
-    // Upload images to firebase storage
-    if(files) {
-      images = await Promise.all(files.map(async (file) => {
+    // Upload new images to firebase storage
+    if(files.length > 0) {
+      newImages = await Promise.all(files.map(async (file) => {
         return await uploadImage(file)
       }))
     }
 
-    const timestamp = moment().utc().valueOf()
+    const allImages = [...existingImages, ...newImages]
+
     const uploadObject: Joke = {
-      approved_by: [] as string[],
+      approved_by: editingTimestamp !== null ? (location.state as EditState)?.joke.approved_by || [] : [],
       date: moment(created).format('YYYY-MM-DD'),
-      images,
+      images: allImages,
       description,
       title,
       orientation
     }
 
-    await uploadPendingJoke(uploadObject, timestamp)
+    if (editingTimestamp !== null) {
+      // Update existing joke (checks both pending and approved)
+      await updateJoke(uploadObject, editingTimestamp)
+    } else {
+      // Create new joke
+      const timestamp = moment().utc().valueOf()
+      await uploadPendingJoke(uploadObject, timestamp)
+    }
+
     setLoading(false)
     navigate('/')
   }
 
   return (
     <Stack className="add-joke-root">
-      <Title>Add New Joke</Title>
-      <Text>Capture the joke in a card, so that we never forget it!</Text>
+      <Title>{editingTimestamp !== null ? 'Edit Joke' : 'Add New Joke'}</Title>
+      <Text>{editingTimestamp !== null ? 'Update your joke details.' : 'Capture the joke in a card, so that we never forget it!'}</Text>
       <Group align="start">
         <Stack flex={1} gap={30} justify="start" className="joke-form">
           <Stack gap={5}>
@@ -164,6 +203,19 @@ function AddJokePage() {
           </Stack>
           
           <Group wrap='wrap'>
+            {existingImages && existingImages.map((imageUrl) => (
+              <Box className="image-preview" key={imageUrl}>
+                <Image src={imageUrl} fit="cover" w='100%' h='100%'/>
+                <ActionIcon
+                  pos='absolute'
+                  top={12}
+                  right={12}
+                  onClick={() => removeExistingImage(imageUrl)}
+                  variant="subtle">
+                  <IconX />
+                </ActionIcon>
+              </Box>
+            ))}
             {files && files.map((file) => {
               const imageUrl = URL.createObjectURL(file);
 
@@ -201,7 +253,7 @@ function AddJokePage() {
                 description: description || 'Description ...',
                 approved_by: user ? [user?.uid] : [],
                 date: moment(created).format('YYYY-MM-DD'),
-                images: files.length > 0 ? files.map(file => URL.createObjectURL(file)) : [],
+                images: [...existingImages, ...files.map(file => URL.createObjectURL(file))],
                 orientation: orientation
               }}
               userData={userData}

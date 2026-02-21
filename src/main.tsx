@@ -13,15 +13,18 @@ import theme from './theme.ts';
 import { MantineProvider } from '@mantine/core';
 import { AuthProvider } from './context/AuthContext.tsx';
 import { BrowserRouter } from 'react-router'
+import { ModalsProvider } from '@mantine/modals';
 
 createRoot(document.getElementById('root')!).render(
   <MantineProvider theme={theme} forceColorScheme='light'>
-    <AuthProvider>
-      <StrictMode>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </StrictMode>
-    </AuthProvider>
+    <ModalsProvider>
+      <AuthProvider>
+        <StrictMode>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </StrictMode>
+      </AuthProvider>
+    </ModalsProvider>
   </MantineProvider>
 )

@@ -1,6 +1,7 @@
 import { db } from '../firebase/firebase';
 import { collection, doc, getDoc, setDoc, updateDoc, deleteDoc, getDocs, deleteField, onSnapshot } from 'firebase/firestore';
 import type { Joke, UserData, JokeItem } from '../types/types';
+import { deleteImage, getFileNameFromURL } from './storage';
 
 export async function addDocument(collectionName: string, data: any) {
   const colRef = collection(db, collectionName);
@@ -81,6 +82,37 @@ export async function uploadPendingJoke(joke: Joke, timestamp: number) {
   console.log('Uploaded joke to pending-jokes.')
 }
 
+
+export async function updateJoke(joke: Joke, timestamp: number) {
+  const jokeKey = timestamp.toString()
+  
+  // Try pending-jokes first
+  const pendingDocRef = doc(db, 'jokes', 'pending-jokes')
+  const pendingSnap = await getDoc(pendingDocRef)
+  
+  if (pendingSnap.exists() && pendingSnap.data()?.[jokeKey]) {
+    await updateDoc(pendingDocRef, {
+      [jokeKey]: joke
+    })
+    console.log('Updated joke in pending-jokes.')
+    return
+  }
+  
+  // If not in pending, try approved-jokes
+  const approvedDocRef = doc(db, 'jokes', 'approved-jokes')
+  const approvedSnap = await getDoc(approvedDocRef)
+  
+  if (approvedSnap.exists() && approvedSnap.data()?.[jokeKey]) {
+    await updateDoc(approvedDocRef, {
+      [jokeKey]: joke
+    })
+    console.log('Updated joke in approved-jokes.')
+    return
+  }
+  
+  throw new Error('Joke not found')
+}
+
 export async function approveJoke(jokeTimestamp: number, userUid: string, currentApprovedBy: string[]) {
   const updatedApprovedBy = [...currentApprovedBy, userUid]
   
@@ -126,5 +158,50 @@ export async function approveJoke(jokeTimestamp: number, userUid: string, curren
         [jokeKey]: updatedJoke
       })
     }
+  }
+}
+
+export async function deleteJoke(jokeTimestamp: number) {
+  const jokeKey = jokeTimestamp.toString()
+  let jokeData: Joke | null = null
+  
+  // Try pending-jokes first
+  const pendingDocRef = doc(db, 'jokes', 'pending-jokes')
+  const pendingSnap = await getDoc(pendingDocRef)
+  
+  if (pendingSnap.exists() && pendingSnap.data()?.[jokeKey]) {
+    jokeData = pendingSnap.data()?.[jokeKey]
+    await updateDoc(pendingDocRef, {
+      [jokeKey]: deleteField()
+    })
+  } else {
+    // If not in pending, try approved-jokes
+    const approvedDocRef = doc(db, 'jokes', 'approved-jokes')
+    const approvedSnap = await getDoc(approvedDocRef)
+    
+    if (approvedSnap.exists() && approvedSnap.data()?.[jokeKey]) {
+      jokeData = approvedSnap.data()?.[jokeKey]
+      await updateDoc(approvedDocRef, {
+        [jokeKey]: deleteField()
+      })
+    } else {
+      throw new Error('Joke not found')
+    }
+  }
+  
+  // Delete images from storage
+  if (jokeData?.images && jokeData.images.length > 0) {
+    await Promise.all(
+      jokeData.images.map(async (imageUrl) => {
+        try {
+          const fileName = getFileNameFromURL(imageUrl)
+          if (fileName) {
+            await deleteImage(fileName)
+          }
+        } catch (error) {
+          console.error('Failed to delete image from storage:', error)
+        }
+      })
+    )
   }
 }
