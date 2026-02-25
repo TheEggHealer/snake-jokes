@@ -6,7 +6,7 @@ const JOKE_IMAGES_BUCKET = 'joke-images';
 
 export const uploadImage = async (file: File, fileName?: string): Promise<string> => {
   const compressionOptions = {
-    maxSizeMB: 1,           // Max file size in MB
+    maxSizeMB: 0.5,           // Max file size in MB
     maxWidthOrHeight: 1280, // Max dimensions
     useWebWorker: true,     // Improves performance
   }

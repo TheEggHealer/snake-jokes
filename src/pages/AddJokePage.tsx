@@ -30,6 +30,8 @@ function AddJokePage() {
   const [created, setCreated] = useState<DateValue>()
   const [files, setFiles] = useState<FileWithPath[]>([])
   const [existingImages, setExistingImages] = useState<string[]>([])
+  const [imageUrls, setImageUrls] = useState<string[]>([])
+  const [imageUrl, setImageUrl] = useState<string>('')
   const [orientation, setOrientation] = useState<number>(0)
   const [loading, setLoading] = useState<boolean>(false)
   const [userData, setUserData] = useState<Map<string, UserData>>(new Map())
@@ -74,6 +76,17 @@ function AddJokePage() {
     }
   }
 
+  const addImageUrl = () => {
+    if (imageUrl.trim()) {
+      setImageUrls([...imageUrls, imageUrl])
+      setImageUrl('')
+    }
+  }
+
+  const removeImageUrl = (urlToRemove: string) => {
+    setImageUrls(imageUrls.filter(img => img !== urlToRemove))
+  }
+
   const onUpload = async () => {
     setLoading(true)
     if(!title || !created) {
@@ -89,7 +102,7 @@ function AddJokePage() {
       }))
     }
 
-    const allImages = [...existingImages, ...newImages]
+    const allImages = [...existingImages, ...newImages, ...imageUrls]
 
     const uploadObject: Joke = {
       approved_by: editingTimestamp !== null ? (location.state as EditState)?.joke.approved_by || [] : [],
@@ -199,12 +212,28 @@ function AddJokePage() {
                 </div>
               </Group>
             </Dropzone>
+
+            <Group mt={10}>
+              <Text>OR</Text>
+              <Input
+                flex={1}
+                size="md"
+                placeholder="Image URL"
+                classNames={{
+                  input: 'other-input'
+                }}
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+                />
+              <Button variant="subtle" onClick={addImageUrl}>Add Image</Button>
+            </Group>
           </Stack>
           
           <Group wrap='wrap'>
             {existingImages && existingImages.map((imageUrl) => (
-              <Box className="image-preview" key={imageUrl}>
+              <Box className="image-preview" key={imageUrl} pos="relative">
                 <Image src={imageUrl} fit="cover" w='100%' h='100%'/>
+                <Badge pos="absolute" top={5} left={5} size="sm">Uploaded</Badge>
                 <ActionIcon
                   pos='absolute'
                   top={12}
@@ -215,12 +244,27 @@ function AddJokePage() {
                 </ActionIcon>
               </Box>
             ))}
+            {imageUrls && imageUrls.map((url) => (
+              <Box className="image-preview" key={url} pos="relative">
+                <Image src={url} fit="cover" w='100%' h='100%'/>
+                <Badge pos="absolute" top={5} left={5} size="sm">URL</Badge>
+                <ActionIcon
+                  pos='absolute'
+                  top={12}
+                  right={12}
+                  onClick={() => removeImageUrl(url)}
+                  variant="subtle">
+                  <IconX />
+                </ActionIcon>
+              </Box>
+            ))}
             {files && files.map((file) => {
-              const imageUrl = URL.createObjectURL(file);
+              const fileUrl = URL.createObjectURL(file);
 
               return (
-                <Box className="image-preview" key={file.path}>
-                  <Image src={imageUrl} fit="cover" w='100%' h='100%'/>
+                <Box className="image-preview" key={file.path} pos="relative">
+                  <Image src={fileUrl} fit="cover" w='100%' h='100%'/>
+                  <Badge pos="absolute" top={5} left={5} size="sm">New</Badge>
                   <ActionIcon
                     pos='absolute'
                     top={12}
@@ -260,7 +304,7 @@ function AddJokePage() {
                 description: description || 'Description ...',
                 approved_by: user ? [user?.uid] : [],
                 date: moment(created).format('YYYY-MM-DD'),
-                images: [...existingImages, ...files.map(file => URL.createObjectURL(file))],
+                images: [...existingImages, ...imageUrls, ...files.map(file => URL.createObjectURL(file))],
                 orientation: orientation
               }}
               userData={userData}

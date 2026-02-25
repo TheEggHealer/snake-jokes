@@ -39,7 +39,7 @@ export function listenJokes(callback: (jokes: { approved: JokeItem[]; pending: J
         created: Number.parseInt(timestamp),
         joke: data[timestamp] as Joke
       }))
-      .sort((a, b) => b.created - a.created)
+      .sort((a, b) => new Date(b.joke.date).getTime() - new Date(a.joke.date).getTime())
   }
 
   const unsub = onSnapshot(colRef, (querySnap) => {
