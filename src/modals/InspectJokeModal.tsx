@@ -15,7 +15,7 @@ export interface InspectJokeModalProps {
   onClose: () => void
 }
 
-function InspectJokeModal({ joke, userData, created, onClose }: InspectJokeModalProps) {
+function InspectJokeModal({ joke, created, onClose }: InspectJokeModalProps) {
   const theme = useMantineTheme()
   const navigate = useNavigate()
   const ref = useRef<HTMLDivElement>(null)
@@ -23,7 +23,8 @@ function InspectJokeModal({ joke, userData, created, onClose }: InspectJokeModal
   const [confirmOpened, { open: openConfirm, close: closeConfirm }] = useDisclosure(false)
   const [deleting, setDeleting] = useState(false)
 
-  const dateString = moment(joke.date).format('ddd DD MMMM, YYYY')
+  const jokeDateString = moment(joke.date).format('ddd DD MMMM, YYYY')
+  const createdDateString = moment(created).format('ddd DD MMMM, YYYY')
 
   useEffect(() => {
     setWidth(ref.current?.offsetWidth || 100)
@@ -68,7 +69,10 @@ function InspectJokeModal({ joke, userData, created, onClose }: InspectJokeModal
 
         <Stack gap={10}>
           <Title order={2}>{joke.title}</Title>
-          <Text size="sm" c={theme.colors.secondary[7]}>{dateString}</Text>
+          <Stack gap={5}>
+            <Text size="sm" c={theme.colors.secondary[7]}>{jokeDateString}</Text>
+            <Text size="sm" c={theme.colors.secondary[4]} fs="italic">(Created {createdDateString} by Jonathan)</Text>
+          </Stack>
           <Text c={theme.colors.dark[5]}>{joke.description}</Text>
         </Stack>
 

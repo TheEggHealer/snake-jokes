@@ -1,7 +1,7 @@
-import { Box, Group, Stack, Title, Text, Input, Textarea, Button, useMantineTheme, Image, ActionIcon, Radio } from "@mantine/core"
+import { Box, Group, Stack, Title, Text, Input, Textarea, Button, useMantineTheme, Image, ActionIcon, Radio, Badge } from "@mantine/core"
 import { DateInput, type DateValue } from '@mantine/dates';
 import './AddJokePage.css'
-import { IconCalendar, IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
+import { IconBoltFilled, IconCalendar, IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
 import { Dropzone, IMAGE_MIME_TYPE, type FileWithPath } from "@mantine/dropzone";
 import { useEffect, useState } from "react";
 import JokeCard from "../components/JokeCard";
@@ -244,7 +244,15 @@ function AddJokePage() {
           </Button>
         </Stack>
 
-        <Stack flex={1} align="center">
+        <Stack flex={1} align="center" w='min-content'>
+          <Group justify="space-between" w='70%'>
+            <Title c={theme.colors.secondary[7]} order={3}>Preview</Title>
+            <Badge size="lg">
+              <Group gap={5}>
+                <IconBoltFilled size={12}/>REAL TIME
+              </Group>
+            </Badge>
+          </Group>
           <Box w='70%'>
             <JokeCard 
               joke={{

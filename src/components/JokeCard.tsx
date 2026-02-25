@@ -6,7 +6,7 @@ import { IconPhotoFilled } from "@tabler/icons-react"
 import { Carousel } from "@mantine/carousel"
 import { useEffect, useRef, useState } from "react"
 import { useAuth } from "../context/AuthContext"
-import { approveJoke, deleteJoke } from "../services/firestore"
+import { approveJoke } from "../services/firestore"
 import { useDisclosure } from "@mantine/hooks"
 import InspectJokeModal from "../modals/InspectJokeModal"
 
@@ -52,11 +52,6 @@ function JokeCard({ joke, userData, created, viewportWidth, editing }: JokeCardP
     }
   }
 
-  const onDeleteJoke = async () => {
-    await deleteJoke(created)
-    close()
-  }
-
   return (
     <>
       <Box className="joke-card-root" style={{ rotate: `${0}deg` }} onClick={!editing ? open : undefined}>
@@ -71,7 +66,10 @@ function JokeCard({ joke, userData, created, viewportWidth, editing }: JokeCardP
                 ))}
               </Carousel> :
               <Center className="image-empty" h={height}>
-                <IconPhotoFilled color={theme.colors.dark[2]} size={30} />
+                <Stack align="center">
+                  <IconPhotoFilled color={theme.colors.secondary[3]} size={30} />
+                  <Text c={theme.colors.secondary[3]}>NO IMAGE SELECTED</Text>
+                </Stack>
               </Center>
             }
           </Box>
