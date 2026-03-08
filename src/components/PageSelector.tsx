@@ -2,6 +2,7 @@ import { Box, Group, Stack, Text, useMantineTheme } from "@mantine/core"
 import './PageSelector.css'
 import { type ReactNode } from "react"
 import { IconClockFilled, IconLayoutDashboardFilled } from "@tabler/icons-react"
+import { useMediaQuery } from "@mantine/hooks"
 
 interface PageSelectorProps {
   selectedPage: number
@@ -10,9 +11,10 @@ interface PageSelectorProps {
 
 function PageSelector({ selectedPage, onSelectPage }: PageSelectorProps) {
   const theme = useMantineTheme()
+  const isNarrow = useMediaQuery("(max-width: 900px)")
 
   return (
-    <Box className="page-selector-root">
+    <Box className="page-selector-root" w={isNarrow ? '100%' : '300px'}>
       <Stack>
         <Text c={theme.colors.dark[5]} fw='lighter' size="sm" className="page-selector-title">PAGES</Text>
       
