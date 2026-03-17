@@ -1,4 +1,4 @@
-import { Box, Center, Group, Text } from "@mantine/core"
+import { Center, Group, Text } from "@mantine/core"
 import './SidebarItem.css'
 
 interface SidebarItemProps {
@@ -10,7 +10,7 @@ interface SidebarItemProps {
   padding: number,
 }
 
-function SidebarItem({ type, text, selected, icon, iconSize, padding }: SidebarItemProps) {
+function SidebarItem({ type, text, icon, iconSize, padding }: SidebarItemProps) {
   return (
     <Group 
       className={type === 'button' ? 'sidebar-item' : ''} 

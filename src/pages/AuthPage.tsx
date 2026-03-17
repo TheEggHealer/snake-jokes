@@ -1,10 +1,9 @@
-import { Box, Center, Stack, Title, Text, Input, Group, Button, Loader } from "@mantine/core"
+import { Box, Center, Stack, Title, Text, Input, Group, Button } from "@mantine/core"
 import './AuthPage.css'
 import { IconMailFilled, IconPassword } from "@tabler/icons-react"
 
 import { signIn } from "../services/auth"
 import { useState } from "react"
-import { useAuth } from "../context/AuthContext"
 
 function AuthPage() {
   const [email, setEmail] = useState<string>('')

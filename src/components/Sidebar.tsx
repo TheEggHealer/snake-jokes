@@ -1,4 +1,4 @@
-import { Box, Stack, Title, useMantineTheme } from "@mantine/core";
+import { Box, useMantineTheme } from "@mantine/core";
 
 interface SidebarProps {
   width: number;
