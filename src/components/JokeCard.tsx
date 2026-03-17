@@ -7,7 +7,7 @@ import { Carousel } from "@mantine/carousel"
 import { useEffect, useRef, useState } from "react"
 import { useAuth } from "../context/AuthContext"
 import { approveJoke } from "../services/firestore"
-import { useDisclosure } from "@mantine/hooks"
+import { useDisclosure, useMediaQuery } from "@mantine/hooks"
 import InspectJokeModal from "../modals/InspectJokeModal"
 
 interface JokeCardProps {
@@ -22,6 +22,8 @@ interface JokeCardProps {
 function JokeCard({ joke, userData, created, viewportWidth, editing }: JokeCardProps) {
   const theme = useMantineTheme()
   const { user } = useAuth()
+  const isNarrow = useMediaQuery('(max-width: 900px)')
+  const modalSize = isNarrow ? '100%' : '50%'
 
   const ref = useRef<HTMLDivElement>(null)
   const [width, setWidth] = useState<number>(0)
@@ -100,7 +102,7 @@ function JokeCard({ joke, userData, created, viewportWidth, editing }: JokeCardP
         </Stack>
       </Box>
 
-      <Modal opened={opened} onClose={close} withCloseButton={false} size="50%">
+      <Modal opened={opened} onClose={close} withCloseButton={false} size={modalSize}>
         <InspectJokeModal 
           joke={joke} 
           userData={userData} 

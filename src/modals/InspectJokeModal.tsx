@@ -15,7 +15,7 @@ import { IconPhotoFilled } from "@tabler/icons-react";
 import { Carousel } from "@mantine/carousel";
 import moment from "moment";
 import type { Joke, UserData } from "../types/types";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { useNavigate } from "react-router";
 import { deleteJoke } from "../services/firestore";
@@ -31,17 +31,12 @@ function InspectJokeModal({ joke, created, onClose }: InspectJokeModalProps) {
   const theme = useMantineTheme();
   const navigate = useNavigate();
   const ref = useRef<HTMLDivElement>(null);
-  const [width, setWidth] = useState<number>(0);
   const [confirmOpened, { open: openConfirm, close: closeConfirm }] =
     useDisclosure(false);
   const [deleting, setDeleting] = useState(false);
 
   const jokeDateString = moment(joke.date).format("ddd DD MMMM, YYYY");
   const createdDateString = moment(created).format("ddd DD MMMM, YYYY");
-
-  useEffect(() => {
-    setWidth(ref.current?.offsetWidth || 100);
-  }, [ref.current]);
 
   const handleEdit = () => {
     navigate("/new-joke", { state: { joke, created } });

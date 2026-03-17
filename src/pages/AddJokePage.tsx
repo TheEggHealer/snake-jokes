@@ -1,4 +1,4 @@
-import { Box, Group, Stack, Title, Text, Input, Textarea, Button, useMantineTheme, Image, ActionIcon, Radio, Badge } from "@mantine/core"
+import { Box, Group, Stack, Title, Text, Input, Textarea, Button, useMantineTheme, Image, ActionIcon, Radio, Badge, Flex, Space } from "@mantine/core"
 import { DateInput, type DateValue } from '@mantine/dates';
 import './AddJokePage.css'
 import { IconBoltFilled, IconCalendar, IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
@@ -6,7 +6,7 @@ import { Dropzone, IMAGE_MIME_TYPE, type FileWithPath } from "@mantine/dropzone"
 import { useEffect, useState } from "react";
 import JokeCard from "../components/JokeCard";
 import moment from "moment";
-import { useViewportSize } from "@mantine/hooks";
+import { useMediaQuery, useViewportSize } from "@mantine/hooks";
 import { uploadImage, deleteImage, getFileNameFromURL } from "../services/storage";
 import type { Joke, UserData } from "../types/types";
 import { getUsers, uploadPendingJoke, updateJoke } from "../services/firestore";
@@ -36,6 +36,7 @@ function AddJokePage() {
   const [loading, setLoading] = useState<boolean>(false)
   const [userData, setUserData] = useState<Map<string, UserData>>(new Map())
   const [editingTimestamp, setEditingTimestamp] = useState<number | null>(null)
+  const isNarrow = useMediaQuery('(max-width: 900px)')
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -130,7 +131,7 @@ function AddJokePage() {
     <Stack className="add-joke-root">
       <Title>{editingTimestamp !== null ? 'Edit Joke' : 'Add New Joke'}</Title>
       <Text>{editingTimestamp !== null ? 'Update your joke details.' : 'Capture the joke in a card, so that we never forget it!'}</Text>
-      <Group align="start">
+      <Flex align="start" direction={isNarrow ? "column" : "row"} gap={isNarrow ? 30 : 0}>
         <Stack flex={1} gap={30} justify="start" className="joke-form">
           <Stack gap={5}>
             <Text fw='bolder'>JOKE TITLE</Text>
@@ -288,7 +289,7 @@ function AddJokePage() {
           </Button>
         </Stack>
 
-        <Stack flex={1} align="center" w='min-content'>
+        <Stack flex={1} align="center" w="100%">
           <Group justify="space-between" w='70%'>
             <Title c={theme.colors.secondary[7]} order={3}>Preview</Title>
             <Badge size="lg">
@@ -313,7 +314,9 @@ function AddJokePage() {
               editing={true}/>
           </Box>
         </Stack>
-      </Group>
+      </Flex>
+
+      <Space h={60} />
     </Stack>
   )
 }
